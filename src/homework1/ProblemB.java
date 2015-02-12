@@ -29,7 +29,7 @@ public class ProblemB {
         repTasks = Integer.parseInt(st.nextToken());
 
         //terminating line will contain 0 0
-        while (!(oneTasks == 0 && repTasks == 0)) {
+        while (oneTasks != 0 || repTasks != 0) {
 
             //process one time tasks
             for (int i = 0; i < oneTasks; i ++) {
@@ -76,6 +76,13 @@ public class ProblemB {
                         hasConflict = true;
                     start += interval;
                     end += interval;
+                }
+
+                if (start < limit) {
+                    if (hasTime(start, limit))
+                        schedule.set(start, limit);
+                    else
+                        hasConflict = true;
                 }
             }
 
