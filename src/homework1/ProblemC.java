@@ -3,79 +3,75 @@ package homework1;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
- * Created by Helena on 2/6/2015.
+ * Random Notes for Future Me:
+ * Use Union Find Data Structures
  */
-//TODO Wrong Answer
 public class ProblemC {
+
+    private static int[] representatives;
+
     public static void main(String[] args) throws IOException {
-        int caseNum = 1;
+
+        int possibleReligions = 0, caseNum = 1;
+
+        //given
+        int numStudents, numRelations, studentI, studentJ;
+
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String line = in.readLine();
         StringTokenizer st = new StringTokenizer(line);
-        int m, n, i, j, relI;
 
-        //num students
-        n = Integer.parseInt(st.nextToken());
-        //num relations
-        m = Integer.parseInt(st.nextToken());
+        numStudents = Integer.parseInt(st.nextToken());
+        numRelations = Integer.parseInt(st.nextToken());
 
-        while (m + n != 0) {
+        while (numStudents != 0 || numRelations != 0) {
 
-            ArrayList<Set<Integer>> arr = new ArrayList<Set<Integer>>();
+            representatives = new int[numStudents + 1];
 
-            //arraylist of sets, look for set that contains m or n and insert other number?
-            for (int z = 0; z < m; z++) {
+            for (int k = 1; k < numStudents + 1; k ++)
+                representatives[k] = k;
 
-                relI = -1;
+            //process the relations
+            for (int k = 0; k < numRelations; k ++) {
                 line = in.readLine();
                 st = new StringTokenizer(line);
-                i = Integer.parseInt(st.nextToken());
-                j = Integer.parseInt(st.nextToken());
 
-                for (int k = 0; k < arr.size(); k++) {
-                    if (arr.get(k).contains(i)) {
-                        if (!arr.get(k).contains(j))
-                            arr.get(k).add(j);
-                        if (relI != -1) {
-                            arr.get(relI).addAll(arr.get(k));
-                            arr.remove(k);
-                        }
-                        relI = k;
-                    } else if (arr.get(k).contains(j)) {
-                        arr.get(k).add(i);
-                        if (relI != -1) {
-                            arr.get(relI).addAll(arr.get(k));
-                            arr.remove(k);
-                        }
-                        relI = k;
-                    }
-                }
+                studentI = Integer.parseInt(st.nextToken());
+                studentJ = Integer.parseInt(st.nextToken());
 
-                if (relI == -1) { //then we didn't find a religion containing either i or j
-                    Set<Integer> religion = new HashSet<Integer>();
-                    religion.add(i);
-                    religion.add(j);
-                    arr.add(religion);
-                }
+                if (studentI == studentJ)
+                    continue; //nothing to be done
 
+                union(studentI, studentJ);
             }
 
-            //print arr.size
-            System.out.println("Case " + caseNum++ + ": " + arr.size());
+            possibleReligions = 0;
+            for (int k = 1; k < numStudents + 1; k ++)
+                if (representatives[k] == k)
+                    possibleReligions ++;
+
+            System.out.println("Case " + caseNum++ + ": " + possibleReligions);
 
             //next case
             line = in.readLine();
             st = new StringTokenizer(line);
-            //num students
-            n = Integer.parseInt(st.nextToken());
-            //num relations
-            m = Integer.parseInt(st.nextToken());
+            numStudents = Integer.parseInt(st.nextToken());
+            numRelations = Integer.parseInt(st.nextToken());
         }
+    }
+
+    private static void union(int studentI, int studentJ) {
+        int iParent = find(studentI);
+        int jParent = find(studentJ);
+        representatives[iParent] = jParent;
+    }
+
+    private static int find(int student) {
+        if (representatives[student] != student)
+            representatives[student] = find(representatives[student]);
+        return representatives[student];
     }
 }
