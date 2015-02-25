@@ -71,31 +71,3 @@ public class ProblemA {
 
 }
 
-class Fenwick {
-    public int[] table;
-
-    public Fenwick(int maxN) {
-        this.table = new int[maxN + 1];
-    }
-
-    public int sumQuery(int a, int b) {
-        return sumQuery(b) - sumQuery(a - 1);
-    }
-
-    public int sumQuery(int k) {
-        int ret = 0;
-        while (k > 0) {
-            ret += table[k];
-            k &= k - 1;
-        }
-        return ret;
-    }
-
-    public void adjust(int i, int value) {
-        while (i < table.length) {
-            table[i] += value;
-            i += (i & (-i));
-        }
-    }
-}
-
