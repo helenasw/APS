@@ -3,42 +3,38 @@ package homework3;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 public class MeasuringSort {
 
-    static ArrayList<Integer> values = new ArrayList<Integer>();
+    static int[] values;
+    static int[] helper;
+    static int number;
+    static long numSwaps;
 
     public static void main(String[] args) throws IOException {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        int length, nextVal, numSwaps = 0;
+        int length;
         StringBuilder report = new StringBuilder();
 
         length = Integer.parseInt(in.readLine().trim());
 
         while (length != 0) {
 
-            //add the first one fo freeeee
-            values.add(Integer.parseInt(in.readLine().trim()));
-
-            for (int i = 1; i < length; i++) {
-                nextVal = Integer.parseInt(in.readLine().trim());
-                values.add(nextVal);
-
-                if (nextVal < values.get(i - 1)) {
-                    //the next value will not preserve sortedness
-                    numSwaps += (i - indexOfNextSmaller(nextVal));
-                    Collections.sort(values);
-                }
-                //otherwise, it's still sorted and we don't need to do any swaps
+            values = new int[length];
+            helper = new int[length];
+            for (int i = 0; i < length; i++) {
+                values[i] = Integer.parseInt(in.readLine().trim());
             }
+
+            number = values.length;
+            helper = new int[number];
+            mergesort(0, number - 1);
 
             report.append(numSwaps).append("\n");
 
             //reset everything
-            values.clear();
             numSwaps = 0;
             length = Integer.parseInt(in.readLine().trim());
         }
@@ -46,63 +42,49 @@ public class MeasuringSort {
         System.out.print(report);
     }
 
-    private static int indexOfNextSmaller(int val) {
+    private static void mergesort(int low, int high) {
+        // check if low is smaller then high, if not then the array is sorted
+        if (low < high) {
+            // Get the index of the element which is in the middle
+            int middle = low + (high - low) / 2;
+            // Sort the left side of the array
+            mergesort(low, middle);
+            // Sort the right side of the array
+            mergesort(middle + 1, high);
+            // Combine them both
+            merge(low, middle, high);
+        }
+    }
 
-        //midVal and mid will never retain these values because I know how I'm calling it
-        int mid = 0, midVal, start = 0, end = values.size() - 2;
+    private static void merge(int low, int middle, int high) {
 
-        while (start < end) {
-            mid = (start + end) / 2;
-            midVal = values.get(mid);
-            if (values.get(start) == val)
-                return start;
-            else if (midVal == val)
-                return mid;
-            else if (values.get(end) == val)
-                return end;
-            else if (midVal > val) {
-                if (end == mid)
-                    return start < end ? start : end;
-                end = mid;
-            } else {
-                if (start == mid)
-                    return start < end ? start : end;
-                start = mid;
-            }
+        // Copy both parts into the helper array
+        for (int i = low; i <= high; i++) {
+            helper[i] = values[i];
         }
 
-        return mid;
-//        while (start < end && start != mid) {
-//            mid = (start + end) / 2;
-//            midVal = values.get(mid);
-//
-//            if (midVal < val)
-//                start = mid; //mid might be the next smallest, don't exclude
-//            else if (midVal > val)
-//                end = mid - 1;
-//            else {
-//                //then we need to account for duplicates, and get the last index where midVal occurs
-//                while (midVal == val && mid < values.size() - 1)
-//                    midVal = values.get(++ mid);
-//
-//                return mid - 1; //index of last repeating val
-//            }
-//        }
-//
-//        //midVal should be pretty close to the val by now, so just loop until we get the next smallest
-//        if (midVal < val) {
-//            while (midVal < val && mid < values.size() - 1)
-//                midVal = values.get(++ mid);
-//            return mid - 1;
-//        } else if (midVal > val) {
-//            while (midVal > val && mid > 0)
-//                midVal = values.get(-- mid);
-//            return mid;
-//        } else {
-//            while (midVal == val && mid < values.size() - 1)
-//                midVal = values.get(++ mid);
-//            return mid - 1; //index of last repeating val
-//        }
+        int i = low;
+        int j = middle + 1;
+        int k = low;
+        // Copy the smallest values from either the left or the right side back
+        // to the original array
+        while (i <= middle && j <= high) {
+            if (helper[i] <= helper[j]) {
+                values[k] = helper[i];
+                i++;
+            } else {
+                values[k] = helper[j];
+                numSwaps += (j-k);
+                j++;
+            }
+            k++;
+        }
+        // Copy the rest of the left side of the array into the target array
+        while (i <= middle) {
+            values[k] = helper[i];
+            k++;
+            i++;
+        }
 
     }
 }
