@@ -1,11 +1,10 @@
 package homework4;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
+import java.util.Scanner;
 
 public class FerryFairy {
 
@@ -18,29 +17,25 @@ public class FerryFairy {
         final int UPPER_BOUND = 10000;
         int ferryLen, carLen, numCases, totalCarLen = 0, totalFerrySpace, numCars;
         String line;
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        Scanner scanner = new Scanner(new InputStreamReader(System.in));
 
         report = new StringBuilder();
         cars = new ArrayList<Integer>();
 
-        numCases = Integer.parseInt(eatBlankLines(in));
-        line = eatBlankLines(in);
+        numCases = scanner.nextInt();
 
         for (int i = 0; i < numCases; i ++) {
-            if (line.isEmpty() || line == null)
-                line = eatBlankLines(in);
-            ferryLen = mToCm(Integer.parseInt(line.trim()));
-            line = eatBlankLines(in);
+            ferryLen = mToCm(scanner.nextInt());
             totalFerrySpace = 2 * ferryLen;
 
             cars.add(0); //buffer because we're going to do 1-based indexing
-            while (line != null && !line.isEmpty() && !line.equals("0")) {
+            carLen = scanner.nextInt();
+            while (scanner.hasNext() && carLen != 0) {
                 if (totalCarLen < totalFerrySpace) { //if it's already too long then no reason to continue adding cars
-                    carLen = Integer.parseInt(line.trim());
                     totalCarLen += carLen;
                     cars.add(carLen);
                 }
-                line = in.readLine();
+                carLen = scanner.nextInt();
             }
             cars.add(UPPER_BOUND); //buffer to avoid indexing out
 
@@ -165,12 +160,4 @@ public class FerryFairy {
         }
         report.append('\n');
     }
-
-    private static String eatBlankLines(BufferedReader in) throws IOException {
-        String line = in.readLine();
-        while (line == null || line.isEmpty())
-            line = in.readLine();
-        return line;
-    }
-
 }
