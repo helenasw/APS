@@ -41,12 +41,17 @@ public class WinStreaks {
     }
 
     private static void computeProbabilities(int games, double winProb) {
+
         for (int k = 0; k <= games; k ++) {
-            for (int m = 0; m <= k; m ++) {
-                if (m == k) //probability that you win every game
-                    prob[k][m] = Math.pow(winProb, m);
-                else if (m == k - 1) //probability that you win every game but the first or last one
-                    prob[k][m] = prob[k - 1][m] * (1 - winProb);
+            for (int m = games; m >= k; m --) {
+                prob[k][m] = 1;
+            }
+        }
+
+        for (int k = 0; k <= games; k ++) {
+            for (int m = 0; m < k; m ++) {
+               if (m == k - 1) //probability that you win every game but the first or last one
+                    prob[k][m] = prob[k - 1][m] - Math.pow(winProb, m + 1);
                 else //general case
                     prob[k][m] = prob[k - 1][m] - (prob[k - m - 2][m] * (1 - winProb) * Math.pow(winProb, m + 1));
             }
@@ -56,9 +61,7 @@ public class WinStreaks {
     private static double findLongestWinStreak(int games) {
         double answer = 0;
         for (int k = 1; k <= games; k ++) {
-            for (int m = 1; m <= k; m ++) {
-                answer += (prob[k][m] * m);
-            }
+            answer += ((prob[games][k] - prob[games][k - 1]) * k);
         }
 
         return answer;
