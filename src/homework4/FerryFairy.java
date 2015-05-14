@@ -62,6 +62,7 @@ public class FerryFairy {
         int[] starSpace = new int[ferryLen + 2];
         int[] prevStarSpace = new int[ferryLen + 2];
         int numCars, newStarSpace;
+
         boolean hasValid = false;
 
         //set up the array that stores the space on the other side

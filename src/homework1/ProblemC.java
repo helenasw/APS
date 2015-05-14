@@ -3,7 +3,7 @@ package homework1;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.StringTokenizer;
 
 /**
  * Random Notes for Future Me:
